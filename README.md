@@ -2,6 +2,8 @@
 
 Website for **Vietflavors**, a Vietnamese restaurant in Täby, Sweden. A fast, simple, fully static Next.js site: no database, no CMS, deployed to GitHub Pages.
 
+- **Repo:** https://github.com/vancuongngo/vietflavors-nextjs
+- **Live site:** https://vancuongngo.github.io/vietflavors-nextjs/
 - **Pages:** Home (`/`), Menu (`/menu`), About (`/about`), Contact (`/contact`)
 - **Language:** Swedish content (`<html lang="sv">`)
 - **Stack:** Next.js 16 (App Router), React 19, TypeScript, plain CSS, `next/font` (Poppins + Nunito Sans)
@@ -73,16 +75,16 @@ The workflow in `.github/workflows/deploy.yml` runs on every push to `main` (or 
 
 ### One-time setup
 
-1. **Create a GitHub repository** (for example `vietflavors-nextjs`) and push this project to `main`:
+1. **Push this project to `main`** of https://github.com/vancuongngo/vietflavors-nextjs:
 
    ```bash
-   git remote add origin git@github.com:<your-user>/<repo>.git
+   git remote add origin git@github.com:vancuongngo/vietflavors-nextjs.git
    git push -u origin main
    ```
 
 2. In the repository go to **Settings → Pages** and set **Source** to **GitHub Actions**.
 3. Open the **Actions** tab and wait for the *Deploy to GitHub Pages* run to finish.
-4. The site is live at `https://<your-user>.github.io/<repo>/`. The URL is also shown on the workflow run.
+4. The site is live at https://vancuongngo.github.io/vietflavors-nextjs/. The URL is also shown on the workflow run.
 
 Every later push to `main` redeploys automatically.
 
