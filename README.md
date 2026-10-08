@@ -1,6 +1,6 @@
 # Viet Flavors
 
-Website for **Vietflavors**, a Vietnamese restaurant in Täby, Sweden. A fast, simple, fully static Next.js site: no database, no CMS, deployed to GitHub Pages.
+Website for **Vietflavors**, a Vietnamese restaurant in Täby, Sweden. A fast, simple, fully static Next.js site: no database, no CMS, deployed to GitHub Pages..
 
 - **Repo:** https://github.com/vancuongngo/vietflavors-nextjs
 - **Live site:** https://vancuongngo.github.io/vietflavors-nextjs/
