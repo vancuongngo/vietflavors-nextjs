@@ -37,6 +37,7 @@ jobs:
           else
             export NEXT_PUBLIC_BASE_PATH="/${{ github.event.repository.name }}"
           fi
+          export NEXT_PUBLIC_SITE_ORIGIN="${{ vars.SITE_ORIGIN }}"
           npm run build
       - run: touch out/.nojekyll
       - uses: actions/upload-pages-artifact@v3

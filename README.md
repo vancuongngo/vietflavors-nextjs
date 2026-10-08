@@ -99,7 +99,14 @@ A GitHub Pages **project site** is served from a sub-path (`/<repo>/`), so Next.
 | Project site (`<user>.github.io/<repo>`)                    | Nothing. The workflow sets `NEXT_PUBLIC_BASE_PATH=/<repo>` automatically.                                      |
 | Custom domain, or a `<user>.github.io` repo (served at `/`) | Add a repository variable **`ROOT_DEPLOY`** = `true` (Settings → Secrets and variables → Actions → Variables). |
 
-For a custom domain, also set it under **Settings → Pages → Custom domain** and add the DNS records GitHub lists.
+### Custom domain (vietflavors.se)
+
+1. If the domain is attached to another GitHub Pages site, clear it there first (Settings → Pages → Custom domain, and delete any `CNAME` file in that repo). A domain can belong to only one Pages site.
+2. Add repository variables (Settings → Secrets and variables → Actions → Variables):
+   - `ROOT_DEPLOY` = `true` (build without the `/<repo>` prefix)
+   - `SITE_ORIGIN` = `https://vietflavors.se` (used for sitemap, canonical URLs and JSON-LD)
+3. Set **Settings → Pages → Custom domain** to `vietflavors.se` and re-run the _Deploy to GitHub Pages_ workflow. No `CNAME` file is needed with Actions deploys.
+4. DNS: `A` records for the apex (`185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`) and a `CNAME` for `www` pointing to `<user>.github.io`. Then enable **Enforce HTTPS** once the certificate is issued.
 
 All asset URLs go through `asset()` in `src/lib.ts`, which prepends the base path, so images and CSS-referenced files keep working under the sub-path.
 
