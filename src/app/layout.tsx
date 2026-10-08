@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Nunito_Sans, Poppins } from "next/font/google";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { Footer } from "@/components/layout/Footer";
+import { Header } from "@/components/layout/Header";
 import { site } from "@/data/site";
+import { absoluteUrl } from "@/lib/asset";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -19,9 +20,21 @@ const nunito = Nunito_Sans({
   display: "swap",
 });
 
+const title = `${site.name} – Vietnamesisk restaurang i Täby`;
+
 export const metadata: Metadata = {
-  title: { default: `${site.name} – Vietnamesisk restaurang i Täby`, template: `%s | ${site.name}` },
+  metadataBase: new URL(absoluteUrl("/")),
+  title: { default: title, template: `%s | ${site.name}` },
   description: site.description,
+  openGraph: {
+    type: "website",
+    locale: "sv_SE",
+    siteName: site.name,
+    title,
+    description: site.description,
+    images: [{ url: absoluteUrl("/images/og.jpg"), width: 1920, height: 1080 }],
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = { themeColor: "#000000" };

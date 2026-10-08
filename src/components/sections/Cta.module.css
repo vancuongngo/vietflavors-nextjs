@@ -1,0 +1,28 @@
+.cta {
+  position: relative;
+  color: #fff;
+  text-align: center;
+  padding-block: 120px;
+  overflow: hidden;
+  background: #222 center / cover fixed no-repeat;
+}
+.cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #00000066;
+}
+.content {
+  position: relative;
+  z-index: 1;
+  max-width: 830px;
+  margin-inline: auto;
+}
+.cta h2 {
+  color: #fff;
+  font-size: 34px;
+}
+.cta p {
+  margin: 20px 0 30px;
+  color: #fff;
+}

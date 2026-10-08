@@ -1,0 +1,15 @@
+.section {
+  padding-block: 0;
+}
+.both {
+  padding-block: 90px;
+}
+.top {
+  padding-top: 90px;
+}
+.bottom {
+  padding-bottom: 90px;
+}
+.tint {
+  background: var(--c-tint);
+}

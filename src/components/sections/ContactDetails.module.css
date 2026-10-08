@@ -1,0 +1,22 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+.card {
+  background: #fff;
+  box-shadow: 0 0 30px #00000012;
+  padding: 40px 30px;
+  text-align: center;
+  font-size: 15px;
+}
+.card h3 {
+  font-size: 26px;
+  margin-bottom: 20px;
+}
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

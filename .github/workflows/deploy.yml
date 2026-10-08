@@ -26,6 +26,8 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
+      - run: npm run format:check
+      - run: npm test
       - name: Build static site
         # Project sites live under /<repo>; set repo variable ROOT_DEPLOY=true
         # for a custom domain or a <user>.github.io repo (served from "/").

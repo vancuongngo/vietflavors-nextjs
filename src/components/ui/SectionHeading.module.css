@@ -1,0 +1,18 @@
+.head {
+  max-width: 830px;
+  margin: 0 auto;
+  text-align: center;
+}
+.head h2 {
+  font-size: 36px;
+}
+.head p {
+  font-size: 18px;
+  margin: 12px 0 0;
+}
+.divider {
+  width: 56px;
+  height: 2px;
+  background: var(--c-accent);
+  margin: 14px auto 0;
+}

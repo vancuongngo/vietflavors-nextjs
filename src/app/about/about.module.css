@@ -1,0 +1,23 @@
+.section {
+  padding-bottom: 60px;
+}
+.prose {
+  max-width: 830px;
+  margin-inline: auto;
+  text-align: center;
+  font-size: 15px;
+}
+.prose h2 {
+  font-size: 36px;
+  margin-bottom: 40px;
+}
+.prose hr {
+  border: 0;
+  width: 56px;
+  height: 2px;
+  background: var(--c-accent);
+  margin: 50px auto 40px;
+}
+.prose h5 {
+  font-size: 18px;
+}

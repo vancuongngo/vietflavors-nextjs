@@ -1,0 +1,41 @@
+.hero {
+  position: relative;
+  min-height: 547px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #fff;
+  background: #1c1c1e;
+  overflow: hidden;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+}
+.bg {
+  object-fit: cover;
+}
+.content {
+  position: relative;
+  z-index: 1;
+}
+.hero h1 {
+  color: #fff;
+  font-size: 50px;
+}
+.hero p {
+  max-width: 780px;
+  margin: 20px auto 0;
+  font-size: 18px;
+  color: #fff;
+}
+@media (max-width: 689px) {
+  .hero {
+    min-height: 380px;
+  }
+  .hero h1 {
+    font-size: 36px;
+  }
+}

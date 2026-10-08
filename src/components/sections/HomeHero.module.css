@@ -1,0 +1,39 @@
+.hero {
+  position: relative;
+  min-height: 711px;
+  padding-top: 70px;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  background: #1c1c1e;
+  overflow: hidden;
+}
+.bg {
+  object-fit: cover;
+}
+.content {
+  position: relative;
+}
+.hero h1 {
+  color: #fff;
+  font-size: 50px;
+  line-height: 1.5;
+}
+.hero p {
+  font-size: 20px;
+  max-width: 600px;
+  margin: 40px 0 50px;
+  color: #fff;
+  line-height: 1.6;
+}
+@media (max-width: 689px) {
+  .hero {
+    min-height: 520px;
+  }
+  .hero h1 {
+    font-size: 36px;
+  }
+  .hero p {
+    font-size: 16px;
+  }
+}
