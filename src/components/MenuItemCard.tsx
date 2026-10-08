@@ -46,7 +46,7 @@ export function MenuColumns({ columns }: { columns: MenuItem[][] }) {
   );
 }
 
-/** Split items into two balanced columns (left-heavy), like the original layout. */
+/** Split items into two balanced columns (left-heavy). */
 export function splitColumns<T>(items: T[]): [T[], T[]] {
   const mid = Math.ceil(items.length / 2);
   return [items.slice(0, mid), items.slice(mid)];
