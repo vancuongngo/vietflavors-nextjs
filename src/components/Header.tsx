@@ -19,9 +19,14 @@ export function Header() {
           <nav id="main-nav" className="nav" data-open={open} aria-label="Huvudmeny">
             <NavLinks onNavigate={() => setOpen(false)} />
           </nav>
-          <Link href="/contact" className="btn btn--sm header__order">
+          <a
+            href={site.orderUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn--sm header__order"
+          >
             Beställ Mat
-          </Link>
+          </a>
           <button
             className="nav-toggle"
             aria-label="Meny"

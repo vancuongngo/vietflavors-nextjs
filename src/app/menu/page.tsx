@@ -4,6 +4,7 @@ import { PageHero } from "@/components/Hero";
 import { InfoBand } from "@/components/InfoBand";
 import { MenuColumns, splitColumns } from "@/components/MenuItemCard";
 import { menuSections } from "@/data/menu";
+import { site } from "@/data/site";
 
 export const metadata: Metadata = {
   title: "Meny",
@@ -39,6 +40,7 @@ export default function MenuPage() {
         title="Njut av god smak och lev livet"
         text="Hos Vietflavors vill vi att du ska uppleva maten med alla sinnen. Med våra autentiska vietnamesiska rätter, tillagade med kärlek och de bästa råvarorna, bjuder vi in dig att njuta av god smak och skapa minnen. Livet är till för att levas – och det görs bäst med fantastisk mat och gott sällskap."
         button="Beställ Mat"
+        externalHref={site.orderUrl}
         image="/images/cta-2.jpg"
       />
       <InfoBand />
