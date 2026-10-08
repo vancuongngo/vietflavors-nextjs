@@ -27,10 +27,15 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - name: Build static site
-        run: npm run build
-        env:
-          # "/<repo>" for a project site; empty for a custom domain / user site.
-          NEXT_PUBLIC_BASE_PATH: ${{ vars.BASE_PATH != '' && vars.BASE_PATH || format('/{0}', github.event.repository.name) }}
+        # Project sites live under /<repo>; set repo variable ROOT_DEPLOY=true
+        # for a custom domain or a <user>.github.io repo (served from "/").
+        run: |
+          if [ "${{ vars.ROOT_DEPLOY }}" = "true" ]; then
+            export NEXT_PUBLIC_BASE_PATH=""
+          else
+            export NEXT_PUBLIC_BASE_PATH="/${{ github.event.repository.name }}"
+          fi
+          npm run build
       - run: touch out/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
