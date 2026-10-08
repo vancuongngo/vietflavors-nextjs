@@ -1,0 +1,24 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 110px;
+  margin-top: 55px;
+  align-items: start;
+}
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+    column-gap: 0;
+  }
+  .column + .column {
+    margin-top: 28px;
+  }
+}

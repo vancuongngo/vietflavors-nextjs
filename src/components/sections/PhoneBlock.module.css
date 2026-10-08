@@ -1,0 +1,12 @@
+.block {
+  text-align: center;
+}
+.block h4 {
+  font-size: 24px;
+  margin-bottom: 24px;
+}
+.tel {
+  display: block;
+  font-size: 24px;
+  color: var(--c-text);
+}

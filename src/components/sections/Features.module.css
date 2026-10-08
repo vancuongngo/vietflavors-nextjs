@@ -1,0 +1,25 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  margin-top: 70px;
+  padding-bottom: 80px;
+  border-bottom: 1px solid #0000001a;
+  text-align: center;
+}
+.grid img {
+  border-radius: 5px;
+}
+.grid h3 {
+  font-size: 18px;
+  margin: 30px 0 5px;
+}
+.grid p {
+  font-size: 15px;
+  margin-top: 10px;
+}
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

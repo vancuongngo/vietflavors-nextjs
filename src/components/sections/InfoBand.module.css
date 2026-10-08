@@ -1,0 +1,52 @@
+.band {
+  padding-bottom: 90px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 34.7% 1fr;
+}
+.card {
+  background: var(--c-dark);
+  color: #ffffffb3;
+  padding: 60px 40px;
+  border-radius: 5px;
+  margin-top: -70px;
+  position: relative;
+  z-index: 2;
+}
+.card h4 {
+  color: #fff;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+.card p {
+  font-size: 15px;
+  line-height: 2;
+  margin-bottom: 25px;
+}
+.cols {
+  display: grid;
+  grid-template-columns: 63.7% 1fr;
+  padding-top: 60px;
+}
+.hours {
+  padding: 0 60px 0 70px;
+  border-right: 1px solid #0000001a;
+}
+.phone {
+  padding-left: 60px;
+}
+@media (max-width: 960px) {
+  .grid,
+  .cols {
+    grid-template-columns: 1fr;
+  }
+  .card {
+    margin-top: -40px;
+  }
+  .hours,
+  .phone {
+    padding: 30px 0 0;
+    border: 0;
+  }
+}

@@ -24,6 +24,8 @@ npm run dev          # dev server at http://localhost:3000
 | `npm run build`     | Create the static site in `./out`                         |
 | `npm start`         | Serve `./out` locally (via `npx serve`) to test the build |
 | `npm run lint`      | ESLint (Next.js core-web-vitals + TypeScript rules)       |
+| `npm run format`    | Prettier (`format:check` runs in CI)                      |
+| `npm test`          | Vitest data-integrity tests                               |
 | `npm run typecheck` | `tsc --noEmit`                                            |
 
 > Leave `NEXT_PUBLIC_BASE_PATH` unset for local development (see [Base path](#base-path)).
@@ -32,41 +34,41 @@ npm run dev          # dev server at http://localhost:3000
 
 ```
 .
-├── .github/workflows/deploy.yml   # CI: lint, typecheck, build, publish to GitHub Pages
-├── public/images/                 # Static assets (WebP menu photos, logos, hero/CTA images, social icons)
+├── .github/workflows/deploy.yml   # CI: lint, typecheck, format check, tests, build, publish
+├── public/images/                 # WebP menu photos, logos, hero/CTA/OG images, social icons
 ├── src/
-│   ├── app/
-│   │   ├── layout.tsx             # Root layout: fonts, metadata, header + footer
-│   │   ├── globals.css            # All styling (CSS variables + component classes)
-│   │   ├── page.tsx               # Home
-│   │   ├── menu/page.tsx          # Menu
-│   │   ├── about/page.tsx         # About
-│   │   ├── contact/page.tsx       # Contact
+│   ├── app/                       # Routes only; pages stay thin and compose components
+│   │   ├── layout.tsx             # Fonts, site-wide metadata (Open Graph), header + footer
+│   │   ├── globals.css            # Design tokens, reset, base typography only
+│   │   ├── page.tsx               # Home (+ Restaurant JSON-LD)
+│   │   ├── menu/  about/  contact/
+│   │   ├── sitemap.ts  robots.ts  # Generated sitemap.xml / robots.txt
 │   │   └── icon.svg               # Favicon
-│   ├── components/
-│   │   ├── Header.tsx             # Sticky header, mobile menu toggle (client component)
-│   │   ├── NavLinks.tsx           # Nav links with active-page state (client component)
-│   │   ├── Footer.tsx
-│   │   ├── Hero.tsx               # Inner-page hero banner
-│   │   ├── MenuItemCard.tsx       # Dish row + two-column menu layout
-│   │   ├── Cta.tsx                # Full-width image call-to-action band
-│   │   ├── InfoBand.tsx           # Google Maps embed + opening hours / phone block
-│   │   └── Social.tsx             # Social icon links
+│   ├── components/                # Each component has a colocated *.module.css
+│   │   ├── ui/                    # Generic building blocks: Button, Container, Section,
+│   │   │                          #   SectionHeading, Social
+│   │   ├── layout/                # Header, Footer, NavLinks (client components where needed)
+│   │   ├── menu/                  # MenuItem, MenuList (two columns), MenuCategory
+│   │   └── sections/              # Page sections: HomeHero, PageHero, Features, MenuTeaser, Cta,
+│   │                              #   InfoBand, ContactDetails, OpeningHours, PhoneBlock, MapEmbed
 │   ├── data/
-│   │   ├── site.ts                # Phone, address, hours, nav, social links
-│   │   └── menu.ts                # All dishes: name, price (SEK), description, image
-│   └── lib.ts                     # `asset()` helper that prefixes the base path
-├── next.config.ts                 # Static export + base path config
-└── eslint.config.mjs
+│   │   ├── site.ts                # Contact info, hours, address, order URL, nav, labels
+│   │   └── menu.ts                # Menu sections and dishes (single source of truth)
+│   └── lib/                       # asset() base-path helper, cx(), JSON-LD builder
+├── tests/data.test.ts             # Data integrity tests (unique ids, photo exists for each dish, ...)
+├── next.config.ts                 # Static export + base path
+└── eslint.config.mjs, .prettierrc.json
 ```
 
-### Design notes
+### Conventions
 
-- **Server Components by default.** Only `Header` and `NavLinks` are client components (mobile menu state and `usePathname`).
-- **Content lives in `src/data`**, not in the JSX. To change a price, add a dish or update the phone number, edit `menu.ts` / `site.ts`. Dish photos go in `public/images/menu/<name>.webp` and are referenced by file name (without extension).
-- **Design tokens** (`--c-accent: #38b6ff`, `--c-tint`, `--c-dark`, container width, fonts) are CSS variables at the top of `globals.css`.
-- **Images** are pre-optimised WebP and served with `images.unoptimized` because the Next.js image optimiser needs a server and this is a static export.
-- **Maps** use a keyless Google Maps `<iframe>` embed (`InfoBand.tsx`). Change the address in `site.ts` and the query in `MapEmbed` if the restaurant moves.
+- **Server Components by default.** Only `Header` and `NavLinks` are client components (mobile menu state, `usePathname`).
+- **Content lives in `src/data`**, not in JSX. The home page's dish list is derived from the same `menu.ts` as the menu page, so a price is edited in one place.
+- **Dish photos** are `public/images/menu/<no>-<id>.webp`. Adding a dish means adding an entry to `menu.ts` and the matching photo. `npm test` fails if a photo is missing.
+- **Styling:** CSS Modules per component; only tokens (`--c-accent`, `--container`, fonts, ...) and the reset are global. Spacing between page sections comes from `<Section>`, not ad-hoc inline styles.
+- **Internal links** use `next/link`; external ones (order page, Google Maps) go through `<Button external>`, which renders a plain `<a target="_blank" rel="noopener noreferrer">`.
+- **Images** are pre-optimised WebP and served with `images.unoptimized` because the Next.js image optimiser needs a server.
+- **SEO:** per-page metadata, Open Graph tags, `sitemap.xml`, `robots.txt` and `Restaurant` JSON-LD (address, hours, phone, menu URL).
 - The social links in `site.ts` currently point to `#`. Replace them with the real profile URLs.
 
 ## Deploying to GitHub Pages
@@ -83,7 +85,7 @@ The workflow in `.github/workflows/deploy.yml` runs on every push to `main` (or 
    ```
 
 2. In the repository go to **Settings → Pages** and set **Source** to **GitHub Actions**.
-3. Open the **Actions** tab and wait for the *Deploy to GitHub Pages* run to finish.
+3. Open the **Actions** tab and wait for the _Deploy to GitHub Pages_ run to finish.
 4. The site is live at https://vancuongngo.github.io/vietflavors-nextjs/. The URL is also shown on the workflow run.
 
 Every later push to `main` redeploys automatically.
@@ -92,9 +94,9 @@ Every later push to `main` redeploys automatically.
 
 A GitHub Pages **project site** is served from a sub-path (`/<repo>/`), so Next.js needs a `basePath`. The workflow handles this:
 
-| Scenario                                                 | What to do                                                                                                   |
-| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Project site (`<user>.github.io/<repo>`)                 | Nothing. The workflow sets `NEXT_PUBLIC_BASE_PATH=/<repo>` automatically.                                    |
+| Scenario                                                    | What to do                                                                                                     |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Project site (`<user>.github.io/<repo>`)                    | Nothing. The workflow sets `NEXT_PUBLIC_BASE_PATH=/<repo>` automatically.                                      |
 | Custom domain, or a `<user>.github.io` repo (served at `/`) | Add a repository variable **`ROOT_DEPLOY`** = `true` (Settings → Secrets and variables → Actions → Variables). |
 
 For a custom domain, also set it under **Settings → Pages → Custom domain** and add the DNS records GitHub lists.
@@ -113,6 +115,31 @@ npx serve out      # note: assets are under /vietflavors-nextjs, so open that pa
 ### Other hosts
 
 `./out` is plain static HTML, CSS and JS. It also works unchanged on Vercel, Netlify, Cloudflare Pages or any static file host. Leave `NEXT_PUBLIC_BASE_PATH` unset there.
+
+## Contributing and release flow
+
+`main` is protected: nobody pushes to it directly. Every change goes through a pull request.
+
+1. Branch from `main`: `git switch -c feature/<short-name>`
+2. Commit and push the branch, then open a pull request into `main`.
+3. The **CI** workflow (`.github/workflows/ci.yml`) runs lint, typecheck, format check, tests and a build. It must pass.
+4. A code owner (`.github/CODEOWNERS`) must approve the pull request.
+5. After merging, the **Deploy to GitHub Pages** workflow runs on `main` and publishes the site.
+
+### One-time repository settings
+
+These are configured in the GitHub UI (Settings → Rules → Rulesets → New branch ruleset), targeting the default branch `main`:
+
+- **Restrict deletions** and **Block force pushes**
+- **Require a pull request before merging**: 1 required approval, **Require review from Code Owners**, dismiss stale approvals on new commits
+- **Require status checks to pass**: add the `verify` check (it appears after CI has run once)
+- Leave the bypass list empty, so no one (including admins) can push straight to `main`
+
+To restrict who can propose changes, use Settings → Collaborators and teams and give people **Read** (they can fork and open pull requests) or **Write** (they can push branches). Only people you list as code owners can give the required approval.
+
+> Branch rulesets on private repositories require a paid GitHub plan. Public repositories get them for free.
+>
+> GitHub does not let an author approve their own pull request. If you are the only maintainer, add a second reviewer or allow yourself to bypass the rule, otherwise your own pull requests can never merge.
 
 ## Troubleshooting
 

@@ -1,0 +1,18 @@
+.title {
+  font-size: 24px;
+  margin-bottom: 30px;
+}
+.inline {
+  display: flex;
+  justify-content: space-between;
+}
+.inline p,
+.title + div p {
+  margin: 0;
+  font-size: 17px;
+  line-height: 34px;
+}
+.dotted {
+  border-top: 4px dotted #00000033;
+  margin: 20px 0;
+}

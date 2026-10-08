@@ -1,10 +1,11 @@
 import Image from "next/image";
-import { asset } from "@/lib";
+import { asset } from "@/lib/asset";
 import { site } from "@/data/site";
+import styles from "./Social.module.css";
 
 export function Social() {
   return (
-    <div className="social">
+    <div className={styles.social}>
       {site.social.map((s) => (
         <a key={s.label} href={s.href} aria-label={s.label} rel="noopener">
           <Image src={asset(`/images/social/${s.icon}.svg`)} alt="" width={12} height={12} />
