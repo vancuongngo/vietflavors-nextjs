@@ -116,6 +116,31 @@ npx serve out      # note: assets are under /vietflavors-nextjs, so open that pa
 
 `./out` is plain static HTML, CSS and JS. It also works unchanged on Vercel, Netlify, Cloudflare Pages or any static file host. Leave `NEXT_PUBLIC_BASE_PATH` unset there.
 
+## Contributing and release flow
+
+`main` is protected: nobody pushes to it directly. Every change goes through a pull request.
+
+1. Branch from `main`: `git switch -c feature/<short-name>`
+2. Commit and push the branch, then open a pull request into `main`.
+3. The **CI** workflow (`.github/workflows/ci.yml`) runs lint, typecheck, format check, tests and a build. It must pass.
+4. A code owner (`.github/CODEOWNERS`) must approve the pull request.
+5. After merging, the **Deploy to GitHub Pages** workflow runs on `main` and publishes the site.
+
+### One-time repository settings
+
+These are configured in the GitHub UI (Settings → Rules → Rulesets → New branch ruleset), targeting the default branch `main`:
+
+- **Restrict deletions** and **Block force pushes**
+- **Require a pull request before merging**: 1 required approval, **Require review from Code Owners**, dismiss stale approvals on new commits
+- **Require status checks to pass**: add the `verify` check (it appears after CI has run once)
+- Leave the bypass list empty, so no one (including admins) can push straight to `main`
+
+To restrict who can propose changes, use Settings → Collaborators and teams and give people **Read** (they can fork and open pull requests) or **Write** (they can push branches). Only people you list as code owners can give the required approval.
+
+> Branch rulesets on private repositories require a paid GitHub plan. Public repositories get them for free.
+>
+> GitHub does not let an author approve their own pull request. If you are the only maintainer, add a second reviewer or allow yourself to bypass the rule, otherwise your own pull requests can never merge.
+
 ## Troubleshooting
 
 - **Hydration warning in dev mentioning `bis_skin_checked`:** caused by a browser extension (e.g. Bitdefender TrafficLight) modifying the DOM before React loads. Test in a private window or disable the extension for `localhost`. It does not affect the code.
