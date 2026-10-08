@@ -1,12 +1,12 @@
 # Viet Flavors
 
-Website for **Vietflavors**, a Vietnamese restaurant in Täby, Sweden. A fast, simple, fully static Next.js site: no database, no CMS, deployed to GitHub Pages..
+Website for **Vietflavors**, a Vietnamese restaurant in Täby, Sweden. A fast, simple, fully static Next.js site: no database, no CMS, deployed to GitHub Pages.
 
 - **Repo:** https://github.com/vancuongngo/vietflavors-nextjs
-- **Live site:** https://vancuongngo.github.io/vietflavors-nextjs/
+- **Live site:** https://vietflavors.se
 - **Pages:** Home (`/`), Menu (`/menu`), About (`/about`), Contact (`/contact`)
 - **Language:** Swedish content (`<html lang="sv">`)
-- **Stack:** Next.js 16 (App Router), React 19, TypeScript, plain CSS, `next/font` (Poppins + Nunito Sans)
+- **Stack:** Next.js 16 (App Router), React 19, TypeScript, CSS Modules, `next/font` (Poppins + Nunito Sans)
 - **Output:** fully static export (`output: "export"`), so it can be hosted anywhere that serves files
 
 ## Getting started
@@ -28,13 +28,16 @@ npm run dev          # dev server at http://localhost:3000
 | `npm test`          | Vitest data-integrity tests                               |
 | `npm run typecheck` | `tsc --noEmit`                                            |
 
-> Leave `NEXT_PUBLIC_BASE_PATH` unset for local development (see [Base path](#base-path)).
+> Leave `NEXT_PUBLIC_BASE_PATH` and `NEXT_PUBLIC_SITE_ORIGIN` unset for local development (see [Configuration](#configuration)).
 
 ## Project structure
 
 ```
 .
-├── .github/workflows/deploy.yml   # CI: lint, typecheck, format check, tests, build, publish
+├── .github/
+│   ├── workflows/ci.yml           # Pull requests: lint, typecheck, format check, tests, build
+│   ├── workflows/deploy.yml       # Push to main: same checks, build, publish to GitHub Pages
+│   └── CODEOWNERS                 # Required reviewers for every pull request
 ├── public/images/                 # WebP menu photos, logos, hero/CTA/OG images, social icons
 ├── src/
 │   ├── app/                       # Routes only; pages stay thin and compose components
@@ -57,6 +60,7 @@ npm run dev          # dev server at http://localhost:3000
 │   └── lib/                       # asset() base-path helper, cx(), JSON-LD builder
 ├── tests/data.test.ts             # Data integrity tests (unique ids, photo exists for each dish, ...)
 ├── next.config.ts                 # Static export + base path
+├── .env.example                   # Build-time environment variables
 └── eslint.config.mjs, .prettierrc.json
 ```
 
@@ -71,57 +75,49 @@ npm run dev          # dev server at http://localhost:3000
 - **SEO:** per-page metadata, Open Graph tags, `sitemap.xml`, `robots.txt` and `Restaurant` JSON-LD (address, hours, phone, menu URL).
 - The social links in `site.ts` currently point to `#`. Replace them with the real profile URLs.
 
-## Deploying to GitHub Pages
+## Configuration
 
-The workflow in `.github/workflows/deploy.yml` runs on every push to `main` (or manually from the Actions tab). It installs dependencies, runs lint and typecheck, builds the static site, and publishes `./out` to GitHub Pages.
+Two build-time variables control where the site is served from. Both are optional locally.
 
-### One-time setup
+| Variable                  | Purpose                                                                     | Default                         |
+| ------------------------- | --------------------------------------------------------------------------- | ------------------------------- |
+| `NEXT_PUBLIC_BASE_PATH`   | Sub-path the site is served from (`/<repo>` on a GitHub Pages project site) | empty (served at `/`)           |
+| `NEXT_PUBLIC_SITE_ORIGIN` | Public origin used in the sitemap, canonical/Open Graph URLs and JSON-LD    | `https://vancuongngo.github.io` |
 
-1. **Push this project to `main`** of https://github.com/vancuongngo/vietflavors-nextjs:
+In CI these come from the deploy workflow, driven by two **repository variables** (Settings → Secrets and variables → Actions → Variables):
 
-   ```bash
-   git remote add origin git@github.com:vancuongngo/vietflavors-nextjs.git
-   git push -u origin main
-   ```
+| Repository variable | Production value         | Effect                                                                                                |
+| ------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------- |
+| `ROOT_DEPLOY`       | `true`                   | Build without the `/<repo>` prefix. Needed for a custom domain. If unset, the base path is `/<repo>`. |
+| `SITE_ORIGIN`       | `https://vietflavors.se` | Passed to the build as `NEXT_PUBLIC_SITE_ORIGIN`.                                                     |
 
-2. In the repository go to **Settings → Pages** and set **Source** to **GitHub Actions**.
-3. Open the **Actions** tab and wait for the _Deploy to GitHub Pages_ run to finish.
-4. The site is live at https://vancuongngo.github.io/vietflavors-nextjs/. The URL is also shown on the workflow run.
+All asset URLs go through `asset()` in `src/lib/asset.ts`, which prepends the base path, so images and CSS-referenced files work under a sub-path too. Use it for any new `/public` asset.
 
-Every later push to `main` redeploys automatically.
+## Deployment
 
-### Base path
+The site is a static export published to **GitHub Pages** at **https://vietflavors.se**. The _Deploy to GitHub Pages_ workflow (`.github/workflows/deploy.yml`) runs on every push to `main` (that is, after a pull request is merged) and can also be started manually from the Actions tab. It runs lint, typecheck, format check and tests, builds the site, and publishes `./out`.
 
-A GitHub Pages **project site** is served from a sub-path (`/<repo>/`), so Next.js needs a `basePath`. The workflow handles this:
+### Repository settings the deployment depends on
 
-| Scenario                                                    | What to do                                                                                                     |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| Project site (`<user>.github.io/<repo>`)                    | Nothing. The workflow sets `NEXT_PUBLIC_BASE_PATH=/<repo>` automatically.                                      |
-| Custom domain, or a `<user>.github.io` repo (served at `/`) | Add a repository variable **`ROOT_DEPLOY`** = `true` (Settings → Secrets and variables → Actions → Variables). |
+- **Settings → Pages → Source:** GitHub Actions
+- **Settings → Pages → Custom domain:** `vietflavors.se`, with **Enforce HTTPS** enabled. No `CNAME` file is needed with Actions deploys.
+- **Repository variables:** `ROOT_DEPLOY` and `SITE_ORIGIN` as in the table above
+- **DNS** (at the domain registrar): `A` records for the apex pointing to GitHub Pages (`185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`) and a `CNAME` for `www` pointing to `vancuongngo.github.io`
 
-### Custom domain (vietflavors.se)
+A custom domain can belong to only one GitHub Pages site at a time. To move it to another repo, clear it from the old site (and delete any `CNAME` file there) before setting it here.
 
-1. If the domain is attached to another GitHub Pages site, clear it there first (Settings → Pages → Custom domain, and delete any `CNAME` file in that repo). A domain can belong to only one Pages site.
-2. Add repository variables (Settings → Secrets and variables → Actions → Variables):
-   - `ROOT_DEPLOY` = `true` (build without the `/<repo>` prefix)
-   - `SITE_ORIGIN` = `https://vietflavors.se` (used for sitemap, canonical URLs and JSON-LD)
-3. Set **Settings → Pages → Custom domain** to `vietflavors.se` and re-run the _Deploy to GitHub Pages_ workflow. No `CNAME` file is needed with Actions deploys.
-4. DNS: `A` records for the apex (`185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`) and a `CNAME` for `www` pointing to `<user>.github.io`. Then enable **Enforce HTTPS** once the certificate is issued.
-
-All asset URLs go through `asset()` in `src/lib.ts`, which prepends the base path, so images and CSS-referenced files keep working under the sub-path.
-
-### Building and checking the deploy locally
-
-To reproduce what GitHub will publish:
+### Checking the production build locally
 
 ```bash
-NEXT_PUBLIC_BASE_PATH=/vietflavors-nextjs npm run build
-npx serve out      # note: assets are under /vietflavors-nextjs, so open that path
+NEXT_PUBLIC_SITE_ORIGIN=https://vietflavors.se npm run build
+npx serve out      # http://localhost:3000
 ```
+
+To reproduce a project-site build instead, set `NEXT_PUBLIC_BASE_PATH=/vietflavors-nextjs` and open that path.
 
 ### Other hosts
 
-`./out` is plain static HTML, CSS and JS. It also works unchanged on Vercel, Netlify, Cloudflare Pages or any static file host. Leave `NEXT_PUBLIC_BASE_PATH` unset there.
+`./out` is plain static HTML, CSS and JS. It also works unchanged on Vercel, Netlify, Cloudflare Pages or any static file host. Set `NEXT_PUBLIC_SITE_ORIGIN` to the public URL and leave `NEXT_PUBLIC_BASE_PATH` unset.
 
 ## Contributing and release flow
 
@@ -151,5 +147,6 @@ To restrict who can propose changes, use Settings → Collaborators and teams an
 ## Troubleshooting
 
 - **Hydration warning in dev mentioning `bis_skin_checked`:** caused by a browser extension (e.g. Bitdefender TrafficLight) modifying the DOM before React loads. Test in a private window or disable the extension for `localhost`. It does not affect the code.
-- **Broken images or CSS after deploying to a project site:** the base path was not applied. Check that the build step in the workflow ran with `NEXT_PUBLIC_BASE_PATH=/<repo>`, and that any new image paths use `asset()`.
+- **Broken images or CSS after a deploy:** the base path does not match where the site is served. On `vietflavors.se` the repository variable `ROOT_DEPLOY` must be `true`; on a `github.io/<repo>` project site it must be unset. New image paths must go through `asset()`.
+- **Sitemap or canonical URLs show the wrong domain:** check the `SITE_ORIGIN` repository variable.
 - **404 on refresh of a sub-page:** the export uses `trailingSlash: true`, so `/menu/` resolves to `menu/index.html`. Make sure links use the Next.js `<Link>` component or end in a slash.
