@@ -1,6 +1,6 @@
 # Viet Flavors
 
-A Next.js rebuild of the **Vietflavors** restaurant website (a Vietnamese restaurant in Täby, Sweden), originally built with WordPress, the Rishi theme and Elementor. The goal is a visually equivalent, much simpler and faster site: no database, no CMS, just static pages deployed to GitHub Pages.
+Website for **Vietflavors**, a Vietnamese restaurant in Täby, Sweden. A fast, simple, fully static Next.js site: no database, no CMS, deployed to GitHub Pages.
 
 - **Pages:** Home (`/`), Menu (`/menu`), About (`/about`), Contact (`/contact`)
 - **Language:** Swedish content (`<html lang="sv">`)
@@ -62,7 +62,7 @@ npm run dev          # dev server at http://localhost:3000
 
 - **Server Components by default.** Only `Header` and `NavLinks` are client components (mobile menu state and `usePathname`).
 - **Content lives in `src/data`**, not in the JSX. To change a price, add a dish or update the phone number, edit `menu.ts` / `site.ts`. Dish photos go in `public/images/menu/<name>.webp` and are referenced by file name (without extension).
-- **Design tokens** (`--c-accent: #38b6ff`, `--c-tint`, `--c-dark`, container width, fonts) are CSS variables at the top of `globals.css`, taken from the original Rishi theme palette.
+- **Design tokens** (`--c-accent: #38b6ff`, `--c-tint`, `--c-dark`, container width, fonts) are CSS variables at the top of `globals.css`.
 - **Images** are pre-optimised WebP and served with `images.unoptimized` because the Next.js image optimiser needs a server and this is a static export.
 - **Maps** use a keyless Google Maps `<iframe>` embed (`InfoBand.tsx`). Change the address in `site.ts` and the query in `MapEmbed` if the restaurant moves.
 - The social links in `site.ts` currently point to `#`. Replace them with the real profile URLs.
